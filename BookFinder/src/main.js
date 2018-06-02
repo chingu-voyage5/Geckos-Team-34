@@ -17,7 +17,7 @@ Vue.use(VueResource);
 Vue.use(Vuetify);
 Vue.use(VueRouter);
 Vue.prototype.$xmltojson = require('./xml2json.min.js');
-
+Vue.prototype.$GoodReadsApiKey = '';//  YOUR API KEY GOES HERE https // https://www.goodreads.com/api/keys  
 
 const router = new VueRouter({
   mode: 'history',//hash

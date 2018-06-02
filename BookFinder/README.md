@@ -5,6 +5,7 @@ It fetches search results from Goodreads and Google books.
 
 
 ## Build Setup
+* Insert your GoodReads Api Key in main.js
 
 ``` bash
 # install dependencies

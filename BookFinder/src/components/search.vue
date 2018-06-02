@@ -115,7 +115,7 @@ export default {
     ,searchGoodReads(info){
       //GoodReads search
       var ResultsObj = [];
-      this.$http.get('https://cors-anywhere.herokuapp.com/https://www.goodreads.com/search/index.xml?key=whM4DZOLcr7BsKwZs1Gclw&q='+info)
+      this.$http.get('https://cors-anywhere.herokuapp.com/https://www.goodreads.com/search/index.xml?key='+this.$GoodReadsApiKey+'&q='+info)
       .then (function(response){
         var x2js = new this.$xmltojson.X2JS();
         var result = x2js.xml_str2json(response.data).GoodreadsResponse.search;

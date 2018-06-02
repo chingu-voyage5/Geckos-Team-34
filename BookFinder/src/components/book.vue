@@ -1,13 +1,12 @@
 <template>
     <div class="book">
-
     <v-app>
       <v-content>
         <v-container fluid fill-height class="grey lighten-2">
           <v-layout align-center justify-center>
             <v-flex lg6>
               <v-card class="elevation-12" flat>
-                  <div v-if="result.id & !result.error">
+                  <div v-if="result.hasOwnProperty('id') & !result.hasOwnProperty('error')">
   <v-card-media
           class="white--text"
           height="200px"
@@ -38,7 +37,10 @@
                     </div>
 </span>        <span>
              <v-subheader>Similar Books</v-subheader>
-
+                <div v-if="typeof result.similar_books == 'string'">
+                    <p>No similar books found</p>
+                </div>
+                <div v-else>
                     <div v-for="(book, key) in result.similar_books" v-bind:key="key">
                         <v-list-tile :key="book.title" avatar>
                       <router-link :to="'/book/Goodreads/'+book.id">
@@ -54,7 +56,7 @@
                       </v-list-tile-content>
                     </v-list-tile>
                     </div>
-
+                </div>
 
         </span>
           </div>
@@ -115,7 +117,7 @@ export default {
         },
         GetbookGoodread: function (id){
             var ResultsObj = {};
-            this.$http.get('https://cors-anywhere.herokuapp.com/https://www.goodreads.com/book/show/'+id+'.xml?key=whM4DZOLcr7BsKwZs1Gclw')
+            this.$http.get('https://cors-anywhere.herokuapp.com/https://www.goodreads.com/book/show/'+id+'.xml?key='+this.$GoodReadsApiKey)
             .then (function(response){
                 var x2js = new this.$xmltojson.X2JS();
                 var result = x2js.xml_str2json(response.data).GoodreadsResponse.book;
@@ -141,7 +143,7 @@ export default {
                         authors[0].link = result.authors.author.link;
                     }
                     this.$set(ResultsObj,'authors', authors);
-                    this.$set(ResultsObj,'similar_books',result.similar_books.book);
+                    this.$set(ResultsObj,'similar_books',(typeof result.similar_books == 'object' ? result.similar_books.book : ""));
             }else{
                 ResultsObj.error = 1;
             }
