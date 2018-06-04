@@ -1,7 +1,7 @@
 {
-  "name": "searchbooks",
+  "name": "bookfinder",
   "version": "1.0.0",
-  "description": "A books search project",
+  "description": "A Vue.js App that helps you find books, Retrieve book's ratings, author and similar books. It fetches search results from Goodreads and Google books.",
   "author": "Ahmad Hegazy",
   "private": true,
   "scripts": {

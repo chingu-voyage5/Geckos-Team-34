@@ -2,12 +2,11 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 import Vuetify from 'vuetify'
 
-import search from './components/search'
-import book from './components/book'
+import { router } from './router'
+
 Vue.config.productionTip = false
 
 import 'vuetify/dist/vuetify.min.css' 
@@ -15,21 +14,12 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 Vue.use(VueResource);
 Vue.use(Vuetify);
-Vue.use(VueRouter);
+
 Vue.prototype.$xmltojson = require('./xml2json.min.js');
 Vue.prototype.$GoodReadsApiKey = '';//  YOUR API KEY GOES HERE https // https://www.goodreads.com/api/keys  
 
-const router = new VueRouter({
-  mode: 'history',//hash
-  base: __dirname,
-  routes: [
-    {path:'/',component: search},
-   {path: '/book/:src/:id/',component: book}
-  ]
-})
 /* eslint-disable no-new */
 new Vue({
-//  el: '#app',
   router,
   components: { App },
   template: '<App/>'
