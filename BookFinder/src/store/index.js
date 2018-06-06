@@ -6,7 +6,7 @@ let $xmltojson = require('../xml2json.min.js')
 
 Vue.use(Vuex)
 
-let GOODREADS_API_KEY = 'KFfHdhSPL1nJGx1UXLl9Q' // Add your api key here
+let GOODREADS_API_KEY = '' // Add your api key here
 
 export default new Vuex.Store({
   state: {
