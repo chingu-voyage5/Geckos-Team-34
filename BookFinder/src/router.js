@@ -11,7 +11,13 @@ export const router = new VueRouter({
     mode: 'history',//hash
     base: __dirname,
     routes: [
-      {path:'/',component: search},
-     {path: '/book/:src/:id/',component: book}
+      {
+        path:'/',
+        component: search
+      },
+      {
+        path: '/book/:src/:id/',
+        component: book
+      }
     ]
   })
