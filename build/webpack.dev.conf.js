@@ -1,4 +1,5 @@
 'use strict'
+const Dotenv = require('dotenv-webpack');
 const utils = require('./utils')
 const webpack = require('webpack')
 const config = require('../config')
@@ -45,6 +46,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
+    new Dotenv(),
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env')
     }),

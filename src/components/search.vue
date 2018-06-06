@@ -12,20 +12,11 @@
                 <v-card-text>
                   <p>Enter book title,isbn or Author name</p>
                   <v-form @submit="bookSearch">
-                   <v-text-field v-model="book.info" name="search" lable="search" type="text" required icon> <v-icon>search</v-icon></v-text-field>
-                            <v-card-actions>
-                       <v-spacer></v-spacer>
- <v-btn type="submit" color="primary">Search</v-btn>
-                </v-card-actions>
-
-<!--                      <div  v-html="searchtypeMsg"></div>
-                      <v-radio-group v-model="book.type" row required>
-
-                        <v-radio label="Title" value="title" :key="1"></v-radio>
-                        <v-radio label="isbn" value="isbn" :key="2"></v-radio>
-                        <v-radio label="Author" value="author" name="author" :key="3"></v-radio>
-                      </v-radio-group>-->
-
+                    <v-text-field v-model="book.info" name="search" lable="search" type="text" required icon> <v-icon>search</v-icon></v-text-field>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn type="submit" color="primary">Search</v-btn>
+                      </v-card-actions>
                   </v-form>
                 </v-card-text>
 <!--- SEARCH RESULTS -->
@@ -76,38 +67,39 @@
 
 <script>
 export default {
-  name: 'search',
-  data () {
+  name: "search",
+  data() {
     return {
-      book: {info: ""},
+      book: { info: "" },
       row: null,
-      searchResults: {Goodreads: [],Google: []},
-    }
+      searchResults: { Goodreads: [], Google: [] }
+    };
   },
   methods: {
-    bookSearch: function(e){
+    bookSearch: function(e) {
       e.preventDefault();
-      this.$store.dispatch('searchBooks', { bookInfo: this.book.info})
+      this.$store
+        .dispatch("searchBooks", { bookInfo: this.book.info })
         .then(res => {
-          return this.$store.getters.getSearchResults
+          return this.$store.getters.getSearchResults;
         })
         .then(res => {
-          this.searchResults.Google = res.Google
-          this.searchResults.Goodreads = res.Goodreads
+          this.searchResults.Google = res.Google;
+          this.searchResults.Goodreads = res.Goodreads;
         })
         .catch(err => {
-          console.log('search failed', err)
-        })
+          console.log("search failed", err);
+        });
     }
   },
-  computed: {
-  }
-}
+  computed: {}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
+h1,
+h2 {
   font-weight: normal;
 }
 ul {
