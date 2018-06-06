@@ -6,7 +6,7 @@ let $xmltojson = require('../xml2json.min.js')
 
 Vue.use(Vuex)
 
-let GOODREADS_API_KEY = '' // Add your api key here
+let GOODREADS_API_KEY = process.env.GOODREADS_API_KEY
 
 export default new Vuex.Store({
   state: {
@@ -48,7 +48,6 @@ export default new Vuex.Store({
         // Goodreads
         var ResultsObjGoodreads = [];
         const grUrl = `https://cors-anywhere.herokuapp.com/https://www.goodreads.com/search/index.xml?key=${GOODREADS_API_KEY}&q=${info}`
-        console.log(grUrl)
         axios.get(grUrl)
           .then (function(response){
             var x2js = new $xmltojson.X2JS();
