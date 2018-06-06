@@ -1,12 +1,15 @@
+import dotenv from 'dotenv'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 
+dotenv.config()
 let $xmltojson = require('../xml2json.min.js')
 
 Vue.use(Vuex)
 
-let GOODREADS_API_KEY = '' // Add your api key here
+let GOODREADS_API_KEY = process.env.GOODREADSKEY // Add your api key here
+console.log(process.env.GOODREADSKEY || "Fallback");
 
 export default new Vuex.Store({
   state: {
