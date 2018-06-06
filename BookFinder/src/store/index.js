@@ -2,15 +2,20 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 
+let $xmltojson = require('../xml2json.min.js')
+
 Vue.use(Vuex)
+
+let GOODREADS_API_KEY = 'KFfHdhSPL1nJGx1UXLl9Q' // Add your api key here
 
 export default new Vuex.Store({
   state: {
-    searchResults: {}
+    searchResults: {Goodreads: [],Google: []}
   },
   mutations: {
     searchBooks (state, payload) {
-      console.log('mutations', payload)
+      state.searchResults.Google = payload.google
+      state.searchResults.Goodreads = payload.goodreads
     }
   },
   actions: {
@@ -42,9 +47,11 @@ export default new Vuex.Store({
 
         // Goodreads
         var ResultsObjGoodreads = [];
-        axios.get('https://cors-anywhere.herokuapp.com/https://www.goodreads.com/search/index.xml?key='+this.$GoodReadsApiKey+'&q='+info)
+        const grUrl = `https://cors-anywhere.herokuapp.com/https://www.goodreads.com/search/index.xml?key=${GOODREADS_API_KEY}&q=${info}`
+        console.log(grUrl)
+        axios.get(grUrl)
           .then (function(response){
-            var x2js = new this.$xmltojson.X2JS();
+            var x2js = new $xmltojson.X2JS();
             var result = x2js.xml_str2json(response.data).GoodreadsResponse.search;
             if (result["total-results"] === "1") {
                 var results = result.results.work;
