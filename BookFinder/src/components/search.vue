@@ -37,7 +37,7 @@
                 <v-list two-line>
                   <span v-for="(result, index) in searchResults" v-bind:key="index">
                     <v-subheader>{{ index }} Results</v-subheader>
-                    
+
                     <div v-if="!result[0].error" v-for="(book, key) in result" v-bind:key="key">
                         <v-list-tile :key="book.title" avatar>
                       <router-link :to="'/book/'+index+'/'+book.id">
@@ -53,7 +53,7 @@
                       </v-list-tile-content>
                     </v-list-tile>
                     </div>
-                    <div v-else>  
+                    <div v-else>
                       <v-list-tile>
                       <v-list-tile-content>
                         <v-list-tile-title >No search results found in {{index}}.</v-list-tile-title>
@@ -87,62 +87,64 @@ export default {
   methods: {
     bookSearch: function(e){
       e.preventDefault();
-      this.searchResults.Goodreads = this.searchGoodReads(this.book.info);
+      console.log(this.book.info)
+      this.$store.dispatch('searchBooks', { bookInfo: this.book.info} )
       this.searchResults.Google = this.searchGoogle(this.book.info);
-    },searchGoogle(info){
+      this.searchResults.Goodreads = this.searchGoodReads(this.book.info);
+    },
+    searchGoogle(info){
       //GoogleBooks search
-      var ResultsObj = [];
+      var ResultsObjGoogle = [];
       this.$http.get('https://www.googleapis.com/books/v1/volumes?q='+info)
       .then (function(response){
         var result = response.data;
       if (result.totalItems != 0) {
           var results = result.items;
           for(var i = 0;i < Object.keys(results).length;i++){
-            ResultsObj.push({});
-            ResultsObj[i].id = results[i].id;
-            ResultsObj[i].small_image_url = ((results[i].volumeInfo.hasOwnProperty('imageLinks'))) ? results[i].volumeInfo.imageLinks.smallThumbnail: "";
-            ResultsObj[i].author = (results[i].volumeInfo.hasOwnProperty('authors')) ?  results[i].volumeInfo.authors[0] : "";
-            ResultsObj[i].title = results[i].volumeInfo.title;
-            ResultsObj[i].average_rating = "";
+            ResultsObjGoogle.push({});
+            ResultsObjGoogle[i].id = results[i].id;
+            ResultsObjGoogle[i].small_image_url = ((results[i].volumeInfo.hasOwnProperty('imageLinks'))) ? results[i].volumeInfo.imageLinks.smallThumbnail: "";
+            ResultsObjGoogle[i].author = (results[i].volumeInfo.hasOwnProperty('authors')) ?  results[i].volumeInfo.authors[0] : "";
+            ResultsObjGoogle[i].title = results[i].volumeInfo.title;
+            ResultsObjGoogle[i].average_rating = "";
           }
         }else {
-            ResultsObj.push({'error':1});
+            ResultsObjGoogle.push({'error':1});
         }
       });
-
-      return ResultsObj;
-    }
-    ,searchGoodReads(info){
+      return ResultsObjGoogle;
+    },
+    searchGoodReads(info){
       //GoodReads search
-      var ResultsObj = [];
+      var ResultsObjGoodreads = [];
       this.$http.get('https://cors-anywhere.herokuapp.com/https://www.goodreads.com/search/index.xml?key='+this.$GoodReadsApiKey+'&q='+info)
       .then (function(response){
         var x2js = new this.$xmltojson.X2JS();
         var result = x2js.xml_str2json(response.data).GoodreadsResponse.search;
        if (result["total-results"] === "1") {
             var results = result.results.work;
-            ResultsObj.push({});
-            ResultsObj[0].id = results.best_book.id;
-            ResultsObj[0].small_image_url = results.best_book.small_image_url;
-            ResultsObj[0].author = results.best_book.author.name;
-            ResultsObj[0].title = results.best_book.title;
-            ResultsObj[0].average_rating = (typeof results.average_rating == 'string') ? results.average_rating : results.average_rating.__text;
+            ResultsObjGoodreads.push({});
+            ResultsObjGoodreads[0].id = results.best_book.id;
+            ResultsObjGoodreads[0].small_image_url = results.best_book.small_image_url;
+            ResultsObjGoodreads[0].author = results.best_book.author.name;
+            ResultsObjGoodreads[0].title = results.best_book.title;
+            ResultsObjGoodreads[0].average_rating = (typeof results.average_rating == 'string') ? results.average_rating : results.average_rating.__text;
         }else if(result["total-results"] > 1) {
           var results = result.results.work;
           for(var i = 0;i < Object.keys(results).length;i++){
-            ResultsObj.push({});
-            ResultsObj[i].id = results[i].best_book.id.__text;
-            ResultsObj[i].small_image_url = results[i].best_book.small_image_url;
-            ResultsObj[i].author = results[i].best_book.author.name;
-            ResultsObj[i].title = results[i].best_book.title;
-            ResultsObj[i].average_rating = (typeof results[i].average_rating == 'string') ? results[i].average_rating : results[i].average_rating.__text;
+            ResultsObjGoodreads.push({});
+            ResultsObjGoodreads[i].id = results[i].best_book.id.__text;
+            ResultsObjGoodreads[i].small_image_url = results[i].best_book.small_image_url;
+            ResultsObjGoodreads[i].author = results[i].best_book.author.name;
+            ResultsObjGoodreads[i].title = results[i].best_book.title;
+            ResultsObjGoodreads[i].average_rating = (typeof results[i].average_rating == 'string') ? results[i].average_rating : results[i].average_rating.__text;
           }
         }else {
-            ResultsObj.push({'error':1});
+            ResultsObjGoodreads.push({'error':1});
         }
       });
 
-      return ResultsObj;
+      return ResultsObjGoodreads;
 
     }
   },

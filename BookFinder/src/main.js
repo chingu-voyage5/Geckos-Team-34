@@ -17,7 +17,7 @@ Vue.use(VueResource);
 Vue.use(Vuetify);
 
 Vue.prototype.$xmltojson = require('./xml2json.min.js');
-Vue.prototype.$GoodReadsApiKey = '';//  YOUR API KEY GOES HERE https // https://www.goodreads.com/api/keys
+Vue.prototype.$GoodReadsApiKey = 'KFfHdhSPL1nJGx1UXLl9Q';//  YOUR API KEY GOES HERE https // https://www.goodreads.com/api/keys
 
 /* eslint-disable no-new */
 new Vue({
