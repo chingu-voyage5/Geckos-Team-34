@@ -100,87 +100,19 @@ export default {
         }
     },
     methods: {
-        getBook(src,id){
-            switch (src){
-            case 'Goodreads':
-              //  this.$set(this,'result',this.GetbookGoodread(this.id)); //   
-              this.result = this.GetbookGoodread(id);
-                break;
-            case 'Google':
-                this.result = this.GetbookGoogle(id);
-                break;
-            default: 
-                this.$router.push('/');
-           }
-
-
-        },
-        GetbookGoodread: function (id){
-            var ResultsObj = {};
-            this.$http.get('https://cors-anywhere.herokuapp.com/https://www.goodreads.com/book/show/'+id+'.xml?key='+this.$GoodReadsApiKey)
-            .then (function(response){
-                var x2js = new this.$xmltojson.X2JS();
-                var result = x2js.xml_str2json(response.data).GoodreadsResponse.book;
-                if(result){
-                    ResultsObj.id = result.id;
-                    ResultsObj.title = result.title;
-                    ResultsObj.image_url = result.image_url;
-                    ResultsObj.url = result.url;
-                    ResultsObj.average_rating = result.average_rating;
-                    ResultsObj.description = result.description;
-                    var authors = [];
-                    if (typeof result.authors.author[0] == 'object'){
-                        for(var i = 0;i < Object.keys(result.authors).length;i++){
-                            authors.push({});
-                            authors[i].name = result.authors.author[i].name;
-                            authors[i].average_rating = result.authors.author[i].average_rating;
-                            authors[i].link = result.authors.author[i].link;
-                        }
-                    }else {
-                        authors.push({});
-                        authors[0].name = result.authors.author.name;
-                        authors[0].average_rating = result.authors.author.average_rating;
-                        authors[0].link = result.authors.author.link;
-                    }
-                    this.$set(ResultsObj,'authors', authors);
-                    this.$set(ResultsObj,'similar_books',(typeof result.similar_books == 'object' ? result.similar_books.book : ""));
-            }else{
-                ResultsObj.error = 1;
-            }
-              //  console.log(response.data);
-            });
-            return ResultsObj;
-        },
-        GetbookGoogle: function(id){
-            var ResultsObj = {};
-            this.$http.get('https://www.googleapis.com/books/v1/volumes/'+id)
-            .then (function(response){
-            
-                var result = response.data;
-                if(!result.error){    
-                ResultsObj.id = result.id;
-                ResultsObj.title = result.volumeInfo.title;
-                ResultsObj.image_url = result.volumeInfo.imageLinks.thumbnail;
-                ResultsObj.url = result.volumeInfo.previewLink;
-                ResultsObj.average_rating = result.volumeInfo.maturityRating;
-                ResultsObj.description = (typeof result.volumeInfo.description == 'string')? result.volumeInfo.description : "N/A";
-                var authors = [];
-
-                for(var i = 0;i < Object.keys(result.volumeInfo.authors).length;i++){
-                        authors.push({});
-                        authors[i].name = result.volumeInfo.authors[i]
-                        authors[i].average_rating = "N/A";
-                        authors[i].link = "N/A";
-                    }
-                this.$set(ResultsObj,'authors', authors);
-                this.$set(ResultsObj,'similar_books',[]);
-                }else{
-                   ResultsObj.error = 1;
- 
-                }
-            });
-            return ResultsObj;
-        }
+        getBook: function (src,id){
+          this.$store
+          .dispatch("grabBook", { 
+            src: src,
+            id : id
+           })
+          .then(res => {
+            this.result = this.$store.getters.grabBook;
+          })
+          .catch(err => {
+            console.log("Grab book Failed", err);
+          });
+      }
     },beforeRouteUpdate(to) {
         this.id = to.params.id;
         this.getBook(this.src,this.id);
@@ -189,9 +121,8 @@ export default {
         this.getBook(this.src,this.id);
     },
     created: function(){
-
     }
-}
+  }
 </script>
 
 <style scoped>
