@@ -8,8 +8,6 @@ let $xmltojson = require('../xml2json.min.js')
 let GOODREADS_API_KEY = process.env.GOODREADSKEY // Add your api key here
 
 
-console.log(process.env.GOODREADSKEY || "Fallback");
-
 export default{
     searchBooks ({commit}, payload) {
         // Google
@@ -78,7 +76,7 @@ export default{
               goodreads : ResultsObjGoodreads
             })
     
-      },grapBook: function ({commit}, payload){
+      },grabBook: function ({commit}, payload){
         let src = payload.src;
         let id = payload.id;
         var book = {};
@@ -88,7 +86,7 @@ export default{
               id: id
             }).then(res => {  
               book = res;
-              commit('grapBook', {
+              commit('grabBook', {
               bookInfo : book
               })
           });
@@ -98,7 +96,7 @@ export default{
              id: id
             }).then(res => {
               book = res;
-              commit('grapBook', {
+              commit('grabBook', {
                 bookInfo : book
               })
                   });
@@ -106,8 +104,6 @@ export default{
           default: 
               this.$router.push('/');
          }
-
-
       },
       GetbookGoodread: function ({commit},payload){
         var id = payload.id;
@@ -178,5 +174,4 @@ export default{
       });
       return ResultsObj;
   }
-
 }

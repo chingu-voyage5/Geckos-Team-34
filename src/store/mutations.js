@@ -1,6 +1,6 @@
 export default{
 
-    grapBook (state, payload){
+    grabBook (state, payload){
         state.bookInfo = payload.bookInfo;
     },
     searchBooks (state, payload) {

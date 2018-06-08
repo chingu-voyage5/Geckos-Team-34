@@ -102,17 +102,16 @@ export default {
     methods: {
         getBook: function (src,id){
           this.$store
-          .dispatch("grapBook", { 
+          .dispatch("grabBook", { 
             src: src,
             id : id
            })
           .then(res => {
-            this.result = this.$store.getters.grapBook;
+            this.result = this.$store.getters.grabBook;
           })
           .catch(err => {
-            console.log("Grap book Failed", err);
+            console.log("Grab book Failed", err);
           });
-
       }
     },beforeRouteUpdate(to) {
         this.id = to.params.id;

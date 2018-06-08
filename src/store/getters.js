@@ -2,7 +2,7 @@ export default {
         getSearchResults (state) {
           return state.searchResults
         },
-        grapBook (state) {
+        grabBook (state) {
           return state.bookInfo
         }
 }
