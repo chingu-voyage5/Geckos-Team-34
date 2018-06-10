@@ -13,6 +13,7 @@
     "axios": "0.18.0",
     "dotenv-webpack": "^1.5.7",
     "eslint": "^4.19.1",
+    "firebase": "^5.0.4",
     "material-design-icons-iconfont": "^3.0.3",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",

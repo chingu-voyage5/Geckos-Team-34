@@ -4,5 +4,9 @@ export default {
         },
         grabBook (state) {
           return state.bookInfo
+        },
+        user (state){
+          return state.user;
         }
+
 }

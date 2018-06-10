@@ -13,7 +13,8 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     searchResults: {Goodreads: [],Google: []},
-    bookInfo : {}
+    bookInfo : {},
+    user : null
   },
   mutations,
   actions,
