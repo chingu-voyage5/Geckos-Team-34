@@ -4,15 +4,16 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-let $xmltojson = require('../dist//xml2json.min.js')
-let GOODREADS_API_KEY = process.env.GOODREADSKEY // Add your api key here
-
+let $xmltojson = require('../xml2json.min.js')
+let GOODREADS_API_KEY = process.env.GOODREADSKEY
+let TASTEDIVE_API_KEY = process.env.TASTEDIVEKEY
+let info = ""
 
 export default{
     searchBooks ({commit}, payload) {
         // Google
 
-        let info = payload.bookName
+        info = payload.bookName
         var ResultsObjGoogle = [];
         axios.get('https://www.googleapis.com/books/v1/volumes?q='+info)
           .then (function(response){
@@ -35,7 +36,7 @@ export default{
             console.log(err)
           })
           // ResultsObjGoogle
-  
+
           // Goodreads
           var ResultsObjGoodreads = [];
           const grUrl = `https://cors-anywhere.herokuapp.com/https://www.goodreads.com/search/index.xml?key=${GOODREADS_API_KEY}&q=${info}`
@@ -70,12 +71,12 @@ export default{
               console.log(err)
             })
             // ResultsObjGoodreads
-  
+
             commit('searchBooks', {
               google : ResultsObjGoogle,
               goodreads : ResultsObjGoodreads
             })
-    
+
       },grabBook: function ({commit}, payload){
         let src = payload.src;
         let id = payload.id;
@@ -84,7 +85,7 @@ export default{
           case 'Goodreads':
             this.dispatch('GetbookGoodread',{
               id: id
-            }).then(res => {  
+            }).then(res => {
               book = res;
               commit('grabBook', {
               bookInfo : book
@@ -101,7 +102,7 @@ export default{
               })
                   });
             break;
-          default: 
+          default:
               this.$router.push('/');
          }
       },
@@ -136,8 +137,8 @@ export default{
                     authors[0].link = result.authors.author.link;
                 }
                 Vue.set(ResultsObj,'authors', authors);
-                Vue.set(ResultsObj,'similar_books',(typeof result.similar_books == 'object' ? result.similar_books.book : ""));
-              
+                //Vue.set(ResultsObj,'similar_books',(typeof result.similar_books == 'object' ? result.similar_books.book : ""));
+                ResultsObj.similar_books = getSimilarBooks();
           }else{
             ResultsObj.error = 1;
         }
@@ -148,15 +149,16 @@ export default{
       var ResultsObj = {};
       axios.get('https://www.googleapis.com/books/v1/volumes/'+id)
       .then (function(response){
-      
+
           var result = response.data;
-          if(!result.error){    
+          if(!result.error){
           ResultsObj.id = result.id;
           ResultsObj.title = result.volumeInfo.title;
           ResultsObj.image_url = result.volumeInfo.imageLinks.thumbnail;
           ResultsObj.url = result.volumeInfo.previewLink;
           ResultsObj.average_rating = result.volumeInfo.maturityRating;
           ResultsObj.description = (typeof result.volumeInfo.description == 'string')? result.volumeInfo.description : "N/A";
+          ResultsObj.similar_books = getSimilarBooks();
           var authors = [];
 
           for(var i = 0;i < Object.keys(result.volumeInfo.authors).length;i++){
@@ -165,8 +167,8 @@ export default{
                   authors[i].average_rating = "N/A";
                   authors[i].link = "N/A";
               }
-              Vue.set(ResultsObj,'authors',authors);
-              Vue.set(ResultsObj,'similar_books',[]);
+          Vue.set(ResultsObj,'authors',authors);
+          //Vue.set(ResultsObj,'similar_books',[]);
         }else{
              ResultsObj.error = 1;
 
@@ -174,4 +176,20 @@ export default{
       });
       return ResultsObj;
   }
+}
+
+function getSimilarBooks() {
+    var book = info;
+    var similar_books = {};
+    book = book.replace(/ /g,"+");
+    const url = `https://cors-anywhere.herokuapp.com/https://tastedive.com/api/similar?q=${book}&type=books&k=${TASTEDIVE_API_KEY}&info=1`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            for(var i = 0; i < data["Similar"]["Results"]["length"]; i++) {
+                similar_books = data["Similar"]["Results"];
+                console.log(data["Similar"]["Results"][i]["Name"]);
+        }
+        return similar_books;
+    });
 }

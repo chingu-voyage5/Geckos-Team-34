@@ -23,7 +23,7 @@
           <div>
             <span class="grey--text">{{result.average_rating}}</span><br>
             <span v-html="result.description"></span><br>
-            <span> 
+            <span>
                          <v-subheader>Authors</v-subheader>
 
         <div v-for="(author, index) in result.authors" :key="index">
@@ -42,18 +42,7 @@
                 </div>
                 <div v-else>
                     <div v-for="(book, key) in result.similar_books" v-bind:key="key">
-                        <v-list-tile :key="book.title" avatar>
-                      <router-link :to="'/book/Goodreads/'+book.id">
-                         <v-list-tile-avatar>
-                        <img :src="book.small_image_url" >
-                      </v-list-tile-avatar>
-                      </router-link>
-                      <v-list-tile-content>
-                      <router-link :to="'/book/Goodreads/'+book.id">
-                        <v-list-tile-title v-html="book.title"></v-list-tile-title>
-                      </router-link>
-                        <v-list-tile-sub-title><span class='text--primary'>{{book.authors.author.name}}</span>&mdash; {{book.average_rating}}</v-list-tile-sub-title>
-                      </v-list-tile-content>
+                        <v-list-tile :key="book.Name">
                     </v-list-tile>
                     </div>
                 </div>
@@ -67,7 +56,7 @@
           <v-btn flat color="orange">share</v-btn>
 </v-card-actions>
                 </div>
-                                    <div v-else-if="result.error">  
+                                    <div v-else-if="result.error">
                       <v-list-tile>
                       <v-list-tile-content>
                         <v-list-tile-title >No search results found in {{index}}.</v-list-tile-title>
@@ -88,7 +77,7 @@
 
 
 </template>
- 
+
 <script>
 export default {
     name : 'book',
@@ -102,7 +91,7 @@ export default {
     methods: {
         getBook: function (src,id){
           this.$store
-          .dispatch("grabBook", { 
+          .dispatch("grabBook", {
             src: src,
             id : id
            })
