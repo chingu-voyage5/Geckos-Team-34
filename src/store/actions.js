@@ -2,8 +2,6 @@ import Vue from 'vue';
 import axios from 'axios'
 import dotenv from 'dotenv'
 
-var obj = require('./links.js'); 
-
 dotenv.config()
 
 let $xmltojson = require('../xml2json.min.js')
@@ -160,12 +158,7 @@ export default{
           ResultsObj.average_rating = result.volumeInfo.maturityRating;
           ResultsObj.description = (typeof result.volumeInfo.description == 'string')? result.volumeInfo.description : "N/A";
           var authors = [];
-					
-					obj.getlinks(ResultsObj.url).then(function(res){
-						ResultsObj.buy_links=res;
-//						console.log(ResultsObj.buy_links);
-					});
-          
+
           for(var i = 0;i < Object.keys(result.volumeInfo.authors).length;i++){
                   authors.push({});
                   authors[i].name = result.volumeInfo.authors[i]
