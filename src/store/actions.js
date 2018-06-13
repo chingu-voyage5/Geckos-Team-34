@@ -137,8 +137,10 @@ export default{
                     authors[0].link = result.authors.author.link;
                 }
                 Vue.set(ResultsObj,'authors', authors);
-                //Vue.set(ResultsObj,'similar_books',(typeof result.similar_books == 'object' ? result.similar_books.book : ""));
-                ResultsObj.similar_books = getSimilarBooks();
+                //var similar_books = getSimilarBooks();
+                //console.log(similar_books);
+                ResultsObj.info = info;
+                ResultsObj.tastediveKey = TASTEDIVE_API_KEY;
           }else{
             ResultsObj.error = 1;
         }
@@ -158,7 +160,6 @@ export default{
           ResultsObj.url = result.volumeInfo.previewLink;
           ResultsObj.average_rating = result.volumeInfo.maturityRating;
           ResultsObj.description = (typeof result.volumeInfo.description == 'string')? result.volumeInfo.description : "N/A";
-          ResultsObj.similar_books = getSimilarBooks();
           var authors = [];
 
           for(var i = 0;i < Object.keys(result.volumeInfo.authors).length;i++){
@@ -168,7 +169,7 @@ export default{
                   authors[i].link = "N/A";
               }
           Vue.set(ResultsObj,'authors',authors);
-          //Vue.set(ResultsObj,'similar_books',[]);
+          ResultsObj.info = info;
         }else{
              ResultsObj.error = 1;
 
@@ -183,13 +184,10 @@ function getSimilarBooks() {
     var similar_books = {};
     book = book.replace(/ /g,"+");
     const url = `https://cors-anywhere.herokuapp.com/https://tastedive.com/api/similar?q=${book}&type=books&k=${TASTEDIVE_API_KEY}&info=1`;
-    fetch(url)
+    return fetch(url)
         .then(response => response.json())
         .then(data => {
-            for(var i = 0; i < data["Similar"]["Results"]["length"]; i++) {
-                similar_books = data["Similar"]["Results"];
-                console.log(data["Similar"]["Results"][i]["Name"]);
-        }
-        return similar_books;
+            Object.assign(similar_books, data["Similar"]["Results"]);
+            return similar_books;
     });
 }
