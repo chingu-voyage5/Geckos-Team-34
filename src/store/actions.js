@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-let $xmltojson = require('../xml2json.min.js')
+let $xmltojson = require('../dist//xml2json.min.js')
 let GOODREADS_API_KEY = process.env.GOODREADSKEY // Add your api key here
 
 
