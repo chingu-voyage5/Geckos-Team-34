@@ -39,7 +39,7 @@
                                             <v-subheader>Similar Books</v-subheader>
                                             <div>
                                                 <li v-for="book in similar">
-                                                    {{book["Name"]}}
+                                                    <a :href=book.wUrl target="_blank">{{book["Name"]}}</a>
                                                 </li>
 
                                                 {{similarBooks}}
