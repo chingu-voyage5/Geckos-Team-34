@@ -79,7 +79,7 @@ export default {
     bookSearch: function(e) {
       
       this.$store
-        .dispatch("searchBooks", { bookname: this.book.name })
+        .dispatch("searchBooks", { bookName: this.book.name })
         .then(res => {
           return this.$store.getters.getSearchResults;
         })

@@ -12,7 +12,7 @@ export default{
     searchBooks ({commit}, payload) {
         // Google
 
-        let info = payload.bookInfo
+        let info = payload.bookName
         var ResultsObjGoogle = [];
         axios.get('https://www.googleapis.com/books/v1/volumes?q='+info)
           .then (function(response){
