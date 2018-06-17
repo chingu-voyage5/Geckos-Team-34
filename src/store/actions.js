@@ -2,6 +2,8 @@ import Vue from 'vue';
 import axios from 'axios'
 import dotenv from 'dotenv'
 
+var buylinksAPI = require('./buylinksAPI.js');
+
 dotenv.config()
 
 let $xmltojson = require('../dist//xml2json.min.js')
@@ -121,6 +123,12 @@ export default{
                 ResultsObj.url = result.url;
                 ResultsObj.average_rating = result.average_rating;
                 ResultsObj.description = result.description;
+          //assuming ResultsObj.url is similar to https://www.goodreads.com/book/show/53732.Dune
+          buylinksAPI.ScrapeGoodreads(ResultsObj.url).then(GoodreadsRedirectedUrl).then(function(res){
+						ResultsObj.buy_links=res;
+						//console.log(res);
+					});
+
                 var authors = [];
                 if (typeof result.authors.author[0] == 'object'){
                     for(var i = 0;i < Object.keys(result.authors).length;i++){
@@ -158,6 +166,11 @@ export default{
           ResultsObj.average_rating = result.volumeInfo.maturityRating;
           ResultsObj.description = (typeof result.volumeInfo.description == 'string')? result.volumeInfo.description : "N/A";
           var authors = [];
+          //assuming ResultsObj.url is similar to http://books.google.co.in/books?id=BVMotQEACAAJ&dq=isbn%3D1986525503&hl=&cd=1&source=gbs_api
+          buylinksAPI.GoogleRedirectedUrl(ResultsObj.url).then(function(res){
+						ResultsObj.buy_links=res;
+						//console.log(res);
+					});
 
           for(var i = 0;i < Object.keys(result.volumeInfo.authors).length;i++){
                   authors.push({});
