@@ -35,7 +35,8 @@
                       </v-list-tile-content>
                     </v-list-tile>
                     </div>
-</span>        <span>
+</span>
+        <span>
              <v-subheader>Similar Books</v-subheader>
                 <div v-if="typeof result.similar_books == 'string'">
                     <p>No similar books found</p>
@@ -59,6 +60,19 @@
                 </div>
 
         </span>
+        <span>
+             <v-subheader>Buy The book</v-subheader>
+                <div v-if="typeof result.buy_links == 'string'">
+                    <p>No Buy Links books found</p>
+                </div>
+                <div v-else>
+                    <div v-for="(buyLink, key) in result.buy_links" v-bind:key="key">
+                      <a :href="buyLink" target='_Blank' >{{key}}</a>
+                    </div>
+                </div>
+
+        </span>
+
           </div>
 </v-card-title>
 <!-- @TODO FEATURES TO BE ADDED-->

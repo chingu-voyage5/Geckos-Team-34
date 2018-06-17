@@ -11,8 +11,8 @@
                 </v-toolbar>
                 <v-card-text>
                   <p>Enter book title,isbn or Author name</p>
-                  <v-form @submit="bookSearch">
-                    <v-text-field v-model="book.info" name="search" lable="search" type="text" required icon> <v-icon>search</v-icon></v-text-field>
+                  <v-form ref="searchForm" @submit="bookSearch">
+                    <v-text-field v-model="book.name" name="search" lable="search" type="text" required icon> <v-icon>search</v-icon></v-text-field>
                       <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn type="submit" color="primary">Search</v-btn>
@@ -70,16 +70,15 @@ export default {
   name: "search",
   data() {
     return {
-      book: { info: "" },
+      book: { name: "" },
       row: null,
       searchResults: { Goodreads: [], Google: [] }
     };
   },
   methods: {
     bookSearch: function(e) {
-      e.preventDefault();
       this.$store
-        .dispatch("searchBooks", { bookInfo: this.book.info })
+        .dispatch("searchBooks", { bookName: this.book.name })
         .then(res => {
           return this.$store.getters.getSearchResults;
         })
@@ -90,9 +89,18 @@ export default {
         .catch(err => {
           console.log("search failed", err);
         });
+              e.preventDefault();
+
     }
   },
-  computed: {}
+  computed: {},
+  mounted: function (){
+    if (this.$route.params.name){
+      this.book.name = this.$route.params.name;
+      this.bookSearch();
+    }
+
+  }
 };
 </script>
 

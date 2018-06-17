@@ -8,7 +8,7 @@ var ScrapeGoogle=function(response){
 	var $ = cheerio.load(response.data);
 	var t=$("#buy_v").children();
 	var op=t.html();
-	urls=op.match(/href=(["'])(.*?)\1/gi);
+	var urls=op.match(/href=(["'])(.*?)\1/gi);
 	
 	//below code scrapes the domain name from a list of urls
 	urls.forEach(function(entry){
@@ -17,7 +17,7 @@ var ScrapeGoogle=function(response){
 		temp2=temp2.match(/\w+/gi)[0];
 
 		//below code makes the given url into a proper format using regex				
-		temp3=entry.match(/(http)(.*)/gi)[0];
+		var temp3=entry.match(/(http)(.*)/gi)[0];
 		temp3=temp3.replace(/"/g,'');
 		if(temp2!="google")
 			ans[temp2]=temp3;
@@ -26,14 +26,14 @@ var ScrapeGoogle=function(response){
 }
 
 var GoogleRedirectedUrl=function(url){
-	var links=axios.get(url).then(ScrapeGoogle);
+	var links=axios.get('https://cors-anywhere.herokuapp.com/' + url).then(ScrapeGoogle);
 	return links;
 }
 
 const ScrapeGoodreads=function(url){
 	let promise=new Promise(function(resolve,rej){
 		setTimeout(async function(){
-			var webpage=await axios.get(url);
+			var webpage=await axios.get('https://cors-anywhere.herokuapp.com/' + url);
 			var $ = cheerio.load(webpage.data);
 			var t=$(".buyButtonBar").html().match(/href=(["'])(.*?)\1>[\w]+/gi);
 			t.forEach(function(elem){
@@ -66,8 +66,9 @@ function doRequest(url) {
 var GoodreadsRedirectedUrl=async function(ans){
 	var reans={};
 	for(var i=0;i<Object.keys(ans).length;++i){
-		await doRequest(ans[Object.keys(ans)[i]]).then(function(res){
-			reans[Object.keys(ans)[i]]=res;
+		await doRequest('https://cors-anywhere.herokuapp.com/' + ans[Object.keys(ans)[i]]).then(
+			function(res){
+				reans[Object.keys(ans)[i]]=res;
 		}).catch(function(err){
 			reans[Object.keys(ans)[i]]=ans[Object.keys(ans)[i]];
 		});					
@@ -75,6 +76,8 @@ var GoodreadsRedirectedUrl=async function(ans){
 	return reans;
 }
 
-exports.GoodreadsRedirectedUrl = GoodreadsRedirectedUrl;
-exports.ScrapeGoodreads = ScrapeGoodreads;
-exports.GoogleRedirectedUrl=GoogleRedirectedUrl;
+export default {
+  GoodreadsRedirectedUrl,
+  ScrapeGoodreads,
+  GoogleRedirectedUrl
+};

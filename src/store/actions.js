@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import axios from 'axios'
 import dotenv from 'dotenv'
-
-var buylinksAPI = require('./buylinksAPI.js');
+import buyLinks from '../dist/Buylinks.js'
+//var buyLinks = require();
 
 dotenv.config()
 
-let $xmltojson = require('../xml2json.min.js')
+let $xmltojson = require('../dist/xml2json.min.js')
 let GOODREADS_API_KEY = process.env.GOODREADSKEY // Add your api key here
 
 
@@ -14,7 +14,7 @@ export default{
     searchBooks ({commit}, payload) {
         // Google
 
-        let info = payload.bookInfo
+        let info = payload.bookName
         var ResultsObjGoogle = [];
         axios.get('https://www.googleapis.com/books/v1/volumes?q='+info)
           .then (function(response){
@@ -78,7 +78,8 @@ export default{
               goodreads : ResultsObjGoodreads
             })
     
-      },grabBook: function ({commit}, payload){
+      },
+      grabBook: function ({commit}, payload){
         let src = payload.src;
         let id = payload.id;
         var book = {};
@@ -124,10 +125,10 @@ export default{
                 ResultsObj.average_rating = result.average_rating;
                 ResultsObj.description = result.description;
           //assuming ResultsObj.url is similar to https://www.goodreads.com/book/show/53732.Dune
-          buylinksAPI.ScrapeGoodreads(ResultsObj.url).then(GoodreadsRedirectedUrl).then(function(res){
-						ResultsObj.buy_links=res;
-						//console.log(res);
-					});
+                buyLinks.ScrapeGoodreads(ResultsObj.url).then(buyLinks.GoodreadsRedirectedUrl).then(
+                  function(res){
+                    Vue.set(ResultsObj,'buy_links',res);
+                });
 
                 var authors = [];
                 if (typeof result.authors.author[0] == 'object'){
@@ -151,7 +152,8 @@ export default{
         }
         });
         return ResultsObj;
-    },GetbookGoogle: function ({commit},payload){
+    },
+    GetbookGoogle: function ({commit},payload){
       var id = payload.id;
       var ResultsObj = {};
       axios.get('https://www.googleapis.com/books/v1/volumes/'+id)
@@ -167,9 +169,10 @@ export default{
           ResultsObj.description = (typeof result.volumeInfo.description == 'string')? result.volumeInfo.description : "N/A";
           var authors = [];
           //assuming ResultsObj.url is similar to http://books.google.co.in/books?id=BVMotQEACAAJ&dq=isbn%3D1986525503&hl=&cd=1&source=gbs_api
-          buylinksAPI.GoogleRedirectedUrl(ResultsObj.url).then(function(res){
-						ResultsObj.buy_links=res;
-						//console.log(res);
+          buyLinks.GoogleRedirectedUrl(ResultsObj.url).then(
+            function(res){
+              Vue.set(ResultsObj,'buy_links',res);
+              console.log(res);
 					});
 
           for(var i = 0;i < Object.keys(result.volumeInfo.authors).length;i++){
