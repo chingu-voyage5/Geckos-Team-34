@@ -4,15 +4,16 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-let $xmltojson = require('../dist//xml2json.min.js')
-let GOODREADS_API_KEY = process.env.GOODREADSKEY // Add your api key here
-
+let $xmltojson = require('../dist/xml2json.min.js')
+let GOODREADS_API_KEY = process.env.GOODREADSKEY
+let TASTEDIVE_API_KEY = process.env.TASTEDIVEKEY
+let info = ""
 
 export default{
     searchBooks ({commit}, payload) {
         // Google
 
-        let info = payload.bookName
+        info = payload.bookName
         var ResultsObjGoogle = [];
         axios.get('https://www.googleapis.com/books/v1/volumes?q='+info)
           .then (function(response){
@@ -35,7 +36,7 @@ export default{
             console.log(err)
           })
           // ResultsObjGoogle
-  
+
           // Goodreads
           var ResultsObjGoodreads = [];
           const grUrl = `https://cors-anywhere.herokuapp.com/https://www.goodreads.com/search/index.xml?key=${GOODREADS_API_KEY}&q=${info}`
@@ -70,12 +71,12 @@ export default{
               console.log(err)
             })
             // ResultsObjGoodreads
-  
+
             commit('searchBooks', {
               google : ResultsObjGoogle,
               goodreads : ResultsObjGoodreads
             })
-    
+
       },grabBook: function ({commit}, payload){
         let src = payload.src;
         let id = payload.id;
@@ -84,7 +85,7 @@ export default{
           case 'Goodreads':
             this.dispatch('GetbookGoodread',{
               id: id
-            }).then(res => {  
+            }).then(res => {
               book = res;
               commit('grabBook', {
               bookInfo : book
@@ -101,9 +102,25 @@ export default{
               })
                   });
             break;
-          default: 
+          default:
               this.$router.push('/');
          }
+      },
+      getSimilarBooks: function({commit}, payload) {
+          let book = payload.name
+          let similar_books = {};
+          book = book.replace(/ /g,"+");
+          const url = `https://cors-anywhere.herokuapp.com/https://tastedive.com/api/similar?q=${book}&type=books&k=${process.env.TASTEDIVEKEY}&info=1`;
+          return fetch(url)
+          .then(response => response.json())
+          .then(data => {
+              Object.assign(similar_books, data["Similar"]["Results"]);
+              console.log("got similar books");
+              commit('getSimilarBooks', {
+                  similarBooks: similar_books
+              })
+              return similar_books;
+          });
       },
       GetbookGoodread: function ({commit},payload){
         var id = payload.id;
@@ -136,8 +153,10 @@ export default{
                     authors[0].link = result.authors.author.link;
                 }
                 Vue.set(ResultsObj,'authors', authors);
-                Vue.set(ResultsObj,'similar_books',(typeof result.similar_books == 'object' ? result.similar_books.book : ""));
-              
+                //var similar_books = getSimilarBooks();
+                //console.log(similar_books);
+                ResultsObj.info = info;
+                ResultsObj.tastediveKey = TASTEDIVE_API_KEY;
           }else{
             ResultsObj.error = 1;
         }
@@ -148,9 +167,9 @@ export default{
       var ResultsObj = {};
       axios.get('https://www.googleapis.com/books/v1/volumes/'+id)
       .then (function(response){
-      
+
           var result = response.data;
-          if(!result.error){    
+          if(!result.error){
           ResultsObj.id = result.id;
           ResultsObj.title = result.volumeInfo.title;
           ResultsObj.image_url = result.volumeInfo.imageLinks.thumbnail;
@@ -165,8 +184,8 @@ export default{
                   authors[i].average_rating = "N/A";
                   authors[i].link = "N/A";
               }
-              Vue.set(ResultsObj,'authors',authors);
-              Vue.set(ResultsObj,'similar_books',[]);
+          Vue.set(ResultsObj,'authors',authors);
+          ResultsObj.info = info;
         }else{
              ResultsObj.error = 1;
 

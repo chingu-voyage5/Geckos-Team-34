@@ -12,7 +12,7 @@
                 <v-card-text>
                   <p>Enter book title,isbn or Author name</p>
                   <v-form ref="searchForm" @submit="bookSearch">
-                    <v-text-field v-model="book.name" name="search" lable="search" type="text" required icon> <v-icon>search</v-icon></v-text-field>
+                    <v-text-field v-model="aBook.name" name="search" lable="search" type="text" required icon> <v-icon>search</v-icon></v-text-field>
                       <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn type="submit" color="primary">Search</v-btn>
@@ -31,13 +31,13 @@
 
                     <div v-if="!result[0].error" v-for="(book, key) in result" v-bind:key="key">
                         <v-list-tile :key="book.title" avatar>
-                      <router-link :to="'/book/'+index+'/'+book.id">
+                      <router-link :to="'/book/'+aBook.name+'/'+index+'/'+book.id">
                          <v-list-tile-avatar>
                         <img :src="book.small_image_url" >
                       </v-list-tile-avatar>
                       </router-link>
                       <v-list-tile-content>
-                      <router-link :to="'/book/'+index+'/'+book.id">
+                      <router-link :to="'/book/'+aBook.name+'/'+index+'/'+book.id">
                         <v-list-tile-title v-html="book.title"></v-list-tile-title>
                       </router-link>
                         <v-list-tile-sub-title><span class='text--primary'>{{book.author}}</span>&mdash; {{book.average_rating}}</v-list-tile-sub-title>
@@ -70,16 +70,16 @@ export default {
   name: "search",
   data() {
     return {
-      book: { name: "" },
+      aBook: { name: "" },
       row: null,
       searchResults: { Goodreads: [], Google: [] }
     };
   },
   methods: {
     bookSearch: function(e) {
-      
+
       this.$store
-        .dispatch("searchBooks", { bookName: this.book.name })
+        .dispatch("searchBooks", { bookName: this.aBook.name })
         .then(res => {
           return this.$store.getters.getSearchResults;
         })
@@ -97,7 +97,7 @@ export default {
   computed: {},
   mounted: function (){
     if (this.$route.params.name){
-      this.book.name = this.$route.params.name;
+      this.aBook.name = this.$route.params.name;
       this.bookSearch();
     }
 
