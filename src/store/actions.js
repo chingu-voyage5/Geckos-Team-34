@@ -106,6 +106,22 @@ export default{
               this.$router.push('/');
          }
       },
+      getSimilarBooks: function({commit}, payload) {
+          let book = payload.name
+          let similar_books = {};
+          book = book.replace(/ /g,"+");
+          const url = `https://cors-anywhere.herokuapp.com/https://tastedive.com/api/similar?q=${book}&type=books&k=${process.env.TASTEDIVEKEY}&info=1`;
+          return fetch(url)
+          .then(response => response.json())
+          .then(data => {
+              Object.assign(similar_books, data["Similar"]["Results"]);
+              console.log("got similar books");
+              commit('getSimilarBooks', {
+                  similarBooks: similar_books
+              })
+              return similar_books;
+          });
+      },
       GetbookGoodread: function ({commit},payload){
         var id = payload.id;
         var ResultsObj = {};
@@ -177,17 +193,4 @@ export default{
       });
       return ResultsObj;
   }
-}
-
-function getSimilarBooks() {
-    var book = info;
-    var similar_books = {};
-    book = book.replace(/ /g,"+");
-    const url = `https://cors-anywhere.herokuapp.com/https://tastedive.com/api/similar?q=${book}&type=books&k=${TASTEDIVE_API_KEY}&info=1`;
-    return fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            Object.assign(similar_books, data["Similar"]["Results"]);
-            return similar_books;
-    });
 }

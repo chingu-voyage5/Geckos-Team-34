@@ -41,8 +41,6 @@
                                                 <li v-for="book in similar">
                                                     <router-link :to="'/search/'+book.Name">{{book["Name"]}}</router-link>
                                                 </li>
-
-                                                {{similarBooks}}
                                             </div>
 
                                         </span>
@@ -84,26 +82,25 @@ export default {
             result: {},
             id: this.$route.params.id,
             src: this.$route.params.src,
+            name: this.$route.params.name,
             similar: {}
         }
     },
     computed: {
-        similarBooks() {
-            var book = this.result.info;
-            var similar_books = {};
-            book = book.replace(/ /g,"+");
-            const url = `https://cors-anywhere.herokuapp.com/https://tastedive.com/api/similar?q=${book}&type=books&k=${process.env.TASTEDIVEKEY}&info=1`;
-            console.log(fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                Object.assign(similar_books, data["Similar"]["Results"]);
-                this.similar = similar_books;
-                return {1:{one:1, two:2}, two:2, three:3}
-                return similar_books;
-            }));
-        },
     },
     methods: {
+        getSimilar: function(name) {
+            this.$store.dispatch("getSimilarBooks", {
+                name: name
+            })
+            .then(res => {
+                this.similar = this.$store.getters.getSimilarBooks;
+                console.log();
+            })
+            .catch(err => {
+                console.log("Error in fetching similar books");
+            })
+        },
         getBook: function (src,id){
             this.$store
             .dispatch("grabBook", {
@@ -116,7 +113,7 @@ export default {
             .catch(err => {
                 console.log("Grab book Failed", err);
             });
-        }
+        },
     },beforeRouteUpdate(to) {
         this.id = to.params.id;
         this.getBook(this.src,this.id);
@@ -125,6 +122,8 @@ export default {
         this.getBook(this.src,this.id);
     },
     created: function(){
+        console.log("Created");
+        this.getSimilar(this.name);
     }
 }
 </script>

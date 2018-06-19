@@ -4,5 +4,8 @@ export default {
         },
         grabBook (state) {
           return state.bookInfo
+        },
+        getSimilarBooks(state) {
+            return state.similarBooks
         }
 }

@@ -24,7 +24,7 @@ export const router = new VueRouter({
         component: search
       },
       {
-        path: '/book/:src/:id/',
+        path: '/book/:name/:src/:id/',
         component: book
       }
     ]

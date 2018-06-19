@@ -13,10 +13,11 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     searchResults: {Goodreads: [],Google: []},
-    bookInfo : {}
+    bookInfo : {},
+    similarBooks: {}
   },
   mutations,
   actions,
   getters
-  
+
 })
