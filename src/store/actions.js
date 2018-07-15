@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios'
 import dotenv from 'dotenv'
+import firebase from 'firebase'
 
 dotenv.config()
 
@@ -192,5 +193,66 @@ export default{
           }
       });
       return ResultsObj;
+  },
+  login ({commit},payload){
+    let email = payload.email;
+    let password = payload.password;
+
+    firebase.auth().signInWithEmailAndPassword(email,password).then(
+      user => {
+
+        const newUser = {
+          id: user.user.uid,
+          name: user.user.displayName,
+          email: user.user.email,
+          photoUrl: user.user.photoURL
+        }
+        commit('setUser', {
+          user : newUser
+        })
+      }).
+      catch (err => {
+        alert('ERR .. ' + err.message);
+      }
+    );
+
+
+  },
+  signup ({commit},payload){
+    let email = payload.email;
+    let password = payload.password;
+
+    firebase.auth().createUserWithEmailAndPassword(email,password).then(
+      user => {
+        //        alert('You are now connected');
+                const newUser = {
+                  id: user.user.uid,
+                  name: user.user.displayName,
+                  email: user.user.email,
+                  photoUrl: user.user.photoURL
+                }
+                commit('setUser', {
+                  user : newUser
+                })
+              }).
+              catch (err => {
+                alert('ERR .. ' + err.message);
+              }
+            );
+    },
+  checkUser ({commit}){
+    let user = firebase.auth().currentUser;
+
+    const newUser = {
+      id: user.uid,
+      name: user.displayName,
+      email: user.email,
+      photoUrl: user.photoURL
+    }
+    console.log(newUser);
+    commit('setUser', {
+      user : newUser
+    });
+
   }
 }

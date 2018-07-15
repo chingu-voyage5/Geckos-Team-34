@@ -7,5 +7,8 @@ export default {
         },
         getSimilarBooks(state) {
             return state.similarBooks
+        },
+        user(state) {
+            return state.user
         }
 }
