@@ -8,6 +8,14 @@
               <v-card class="elevation-12" flat>
                 <v-toolbar>
                   <v-icon>search</v-icon> <v-toolbar-title>Search for books</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-toolbar-items  v-if="!user" class="hidden-sm-and-down">
+                      <router-link to="/login" tag="v-btn">Login</router-link>
+                      <router-link to="/signup" tag="v-btn" flat>Signup</router-link>
+                  </v-toolbar-items>
+                  <v-toolbar-items  v-else class="hidden-sm-and-down">
+                      <router-link to="/profile" tag="v-btn">profile</router-link>
+                  </v-toolbar-items>
                 </v-toolbar>
                 <v-card-text>
                   <p>Enter book title,isbn or Author name</p>
@@ -72,7 +80,8 @@ export default {
     return {
       aBook: { name: "" },
       row: null,
-      searchResults: { Goodreads: [], Google: [] }
+      searchResults: { Goodreads: [], Google: [] },
+      user: null
     };
   },
   methods: {
@@ -92,7 +101,10 @@ export default {
         });
               e.preventDefault();
 
-    }
+    },
+    getUser(){
+           this.user = this.$store.getters.user;
+       }
   },
   computed: {},
   mounted: function (){

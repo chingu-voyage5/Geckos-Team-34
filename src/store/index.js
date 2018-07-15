@@ -14,6 +14,7 @@ export const store = new Vuex.Store({
   state: {
     searchResults: {Goodreads: [],Google: []},
     bookInfo : {},
+    user: null,
     similarBooks: {}
   },
   mutations,
